@@ -1,0 +1,22 @@
+[
+  {
+    "alumnoId": "a1",
+    "revisados": ["mat2", "mat3"]
+  },
+  {
+    "alumnoId": "a2",
+    "revisados": ["mat1"]
+  },
+  {
+    "alumnoId": "a3",
+    "revisados": ["mat2"]
+  },
+  {
+    "alumnoId": "a4",
+    "revisados": ["mat1", "mat2", "mat3"]
+  },
+  {
+    "alumnoId": "a5",
+    "revisados": []
+  }
+]

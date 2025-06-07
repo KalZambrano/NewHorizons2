@@ -1,0 +1,31 @@
+[
+  {
+    "semana": "Semana 11",
+    "materiales": [
+      {
+        "id": "mat1",
+        "tipo": "Video",
+        "titulo": "Introducción a React",
+        "estado": "Revisado",
+        "desde": "2025-06-01",
+        "hasta": "2025-06-07"
+      },
+      {
+        "id": "mat2",
+        "tipo": "PDF",
+        "titulo": "Hooks explicados",
+        "estado": "No revisado",
+        "desde": "2025-06-01",
+        "hasta": "2025-06-07"
+      },
+      {
+        "id": "mat3",
+        "tipo": "Tarea",
+        "titulo": "Ejercicio de props",
+        "estado": "Por entregar",
+        "desde": "2025-06-02",
+        "hasta": "2025-06-08"
+      }
+    ]
+  }
+]
