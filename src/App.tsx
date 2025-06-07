@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CheckCircle, Info, ChevronDown, ChevronUp, Circle, AlertCircle } from "lucide-react";
+import { CheckCircle, ChevronDown, ChevronUp, Circle, AlertCircle } from "lucide-react";
 
 interface Material {
   tipo: string;
@@ -30,7 +30,7 @@ interface AlumnoRevision {
 export default function Semana11() {
   const [openWeeks, setOpenWeeks] = useState<Record<number, boolean>>({});
   const [weekData, setWeekData] = useState<SemanaData[]>([]);
-  const [alumnos, setAlumnos] = useState<AlumnoRevision[]>([]);
+  // const [alumnos, setAlumnos] = useState<AlumnoRevision[]>([]);
   const [porcentajes, setPorcentajes] = useState<Record<string, number>>({});
 
   const toggleWeek = (weekIndex: number) => {
@@ -47,7 +47,7 @@ export default function Semana11() {
         const alumnoData: AlumnoRevision[] = await alumnosRes.json();
 
         setWeekData(semanaData);
-        setAlumnos(alumnoData);
+        // setAlumnos(alumnoData);
 
         // Calcular porcentajes dinámicamente
         const totalAlumnos = alumnoData.length;
@@ -89,18 +89,18 @@ export default function Semana11() {
               <div className="mt-4">
                 <p className="font-medium mb-3">Material de estudio</p>
                 {semana.materiales.map((mat, j) => {
+
                   const estadoClase =
                     mat.estado === "Revisado"
                       ? "bg-green-200 text-green-800"
                       : mat.estado === "Por entregar"
-                      ? "bg-yellow-300 text-yellow-900"
-                      : "bg-gray-200 text-gray-800";
+                      ? "bg-yellow-300 text-yellow-900 animate-pulse"
+                      : "bg-gray-200 text-gray-800 animate-pulse";
 
-
-                  const tooltipColor =
-                    mat.estado === "Revisado"
-                      ? "bg-blue-200 text-blue-700"
-                      : "bg-red-500 text-white animate-pulse";
+                  // const tooltipColor =
+                  //   mat.estado === "Revisado"
+                  //     ? "bg-blue-200 text-blue-700"
+                  //     : "bg-red-500 text-white animate-pulse";
 
                   const porcentaje = porcentajes[mat.id] ?? 0;
 
@@ -122,38 +122,29 @@ export default function Semana11() {
                         )}
                       </div>
 
-                      <div className="flex items-center gap-4">
-                        <span
-                          className={`flex items-center px-3 py-1 rounded-full font-bold text-sm ${estadoClase}`}
-                        >
-                          {mat.estado === "Revisado" ? (
-                            <CheckCircle className="size-4 mr-1 text-green-600" />
-                          ) : mat.estado === "Por entregar" ? (
-                            <AlertCircle className="size-4 mr-1 text-yellow-600" />
-                          ) : (
-                            <Circle className="size-4 mr-1 text-gray-600" />
-                          )}
-                          {mat.estado}
-
-                        </span>
-
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <div
-                                className={`w-7 h-7 ${tooltipColor} rounded-full flex items-center justify-center text-xs shadow-lg`}
-                              >
-                                <Info className="w-4 h-4" />
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="text-sm">
-                                {porcentaje}% de alumnos ya revisó este material
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <span
+                              className={`flex items-center px-3 py-1 rounded-full text-sm shadow-md cursor-default font-bold ${estadoClase}`}
+                            >
+                              {mat.estado === "Revisado" ? (
+                                <CheckCircle className="size-4 mr-1 text-green-600" />
+                              ) : mat.estado === "Por entregar" ? (
+                                <AlertCircle className="size-4 mr-1 text-yellow-600" />
+                              ) : (
+                                <Circle className="size-4 mr-1 text-gray-600" />
+                              )}
+                              {mat.estado}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="text-sm">
+                              {porcentaje}% de alumnos ya revisó este material
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   );
                 })}
