@@ -27,5 +27,35 @@
         "hasta": "2025-06-08"
       }
     ]
+  },
+  {
+    "semana": "Semana 12",
+    "materiales": [
+      {
+        "id": "mat4",
+        "tipo": "Video",
+        "titulo": "Componentes Funcionales",
+        "estado": "Revisado",
+        "desde": "2025-06-08",
+        "hasta": "2025-06-14"
+      },
+      {
+        "id": "mat5",
+        "tipo": "PDF",
+        "titulo": "Estado y Ciclo de Vida",
+        "estado": "Revisado",
+        "desde": "2025-06-09",
+        "hasta": "2025-06-15"
+      },
+      {
+        "id": "mat6",
+        "tipo": "Tarea",
+        "titulo": "Desafío: Crear un contador",
+        "estado": "Por entregar",
+        "desde": "2025-06-10",
+        "hasta": "2025-06-16"
+      }
+    ]
   }
+
 ]
