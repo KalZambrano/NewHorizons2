@@ -12,6 +12,9 @@ import DesempenoEstudianteCurso from "@/components/DesempenoEstudianteCurso.js";
 import RankingModal from "@/components/RankingModal.js";
 import DesempenoEstudiante from "@/components/DesempenoEstudiante.js";
 import PopUp from './components/popup/PopUp.jsx';
+import FlashcardWidget from './widgets/FlashcardWidget.jsx';
+
+
 
 interface Material {
   tipo: string;
@@ -39,6 +42,7 @@ interface AlumnoRevision {
 }
 
 export default function SemanaApp() {
+  const [module] = useState('');
   const [totalAlumnos, setTotalAlumnos] = useState<number>(0);
   const [puntosBase, setPuntosBase] = useState<number>(0);
   const [puntosIncrementales, setPuntosIncrementales] = useState<number>(0);
@@ -382,6 +386,8 @@ export default function SemanaApp() {
           </CardContent>
         </Card>
       ))}
+      <FlashcardWidget selectedModule={module} />
     </div>
+    
   );
 }
