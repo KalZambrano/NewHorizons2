@@ -1,12 +1,13 @@
 [
   {
-    "semana": "Semana 11",
+    "semana": "Semana 01",
     "materiales": [
       {
         "id": "mat1",
         "tipo": "Video",
         "titulo": "Introducción a React",
         "estado": "Revisado",
+        "puntos": 20,
         "desde": "2025-06-01",
         "hasta": "2025-06-07"
       },
@@ -15,6 +16,7 @@
         "tipo": "PDF",
         "titulo": "Hooks explicados",
         "estado": "No revisado",
+        "puntos": 20,
         "desde": "2025-06-01",
         "hasta": "2025-06-07"
       },
@@ -23,19 +25,21 @@
         "tipo": "Tarea",
         "titulo": "Ejercicio de props",
         "estado": "Por entregar",
+        "puntos": 20,
         "desde": "2025-06-02",
         "hasta": "2025-06-08"
       }
     ]
   },
   {
-    "semana": "Semana 12",
+    "semana": "Semana 02",
     "materiales": [
       {
         "id": "mat4",
         "tipo": "Video",
         "titulo": "Componentes Funcionales",
         "estado": "Revisado",
+        "puntos": 15,
         "desde": "2025-06-08",
         "hasta": "2025-06-14"
       },
@@ -44,6 +48,7 @@
         "tipo": "PDF",
         "titulo": "Estado y Ciclo de Vida",
         "estado": "Revisado",
+        "puntos": 15,
         "desde": "2025-06-09",
         "hasta": "2025-06-15"
       },
@@ -52,10 +57,10 @@
         "tipo": "Tarea",
         "titulo": "Desafío: Crear un contador",
         "estado": "Por entregar",
+        "puntos": 10,
         "desde": "2025-06-10",
         "hasta": "2025-06-16"
       }
     ]
   }
-
 ]

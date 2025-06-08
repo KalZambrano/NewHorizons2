@@ -1,47 +1,90 @@
 [
   {
     "alumnoId": "a1",
+    "nombre": "Ana",
+    "puntosTotales": 98,
+    "puntosS1": 58,
+    "puntosS2": 40,
     "revisados": ["mat2", "mat3"]
   },
   {
     "alumnoId": "a2",
-    "revisados": []
+    "nombre": "Tomás",
+    "puntosTotales": 71,
+    "puntosS1": 42,
+    "puntosS2": 29,
+    "revisados": ["mat1"]
   },
   {
     "alumnoId": "a3",
-    "revisados": ["mat2","mat3","mat1"]
+    "nombre": "Camila",
+    "puntosTotales": 83,
+    "puntosS1": 50,
+    "puntosS2": 33,
+    "revisados": ["mat2", "mat3", "mat1"]
   },
   {
     "alumnoId": "a4",
-    "revisados": ["mat5"]
+    "nombre": "Elena",
+    "puntosTotales": 38,
+    "puntosS1": 22,
+    "puntosS2": 16,
+    "revisados": ["mat5", "mat2", "mat3"]
   },
   {
     "alumnoId": "a5",
+    "nombre": "Valeria",
+    "puntosTotales": 81,
+    "puntosS1": 46,
+    "puntosS2": 35,
     "revisados": ["mat4"]
   },
   {
     "alumnoId": "a6",
-    "revisados": ["mat1","mat3"]
+    "nombre": "Kaleb",
+    "puntosTotales": 10,
+    "puntosS1": 6,
+    "puntosS2": 4,
+    "revisados": ["mat1", "mat3"]
   },
   {
     "alumnoId": "a7",
+    "nombre": "Pedro",
+    "puntosTotales": 85,
+    "puntosS1": 50,
+    "puntosS2": 35,
     "revisados": ["mat2", "mat5"]
   },
   {
     "alumnoId": "a8",
+    "nombre": "Lucero",
+    "puntosTotales": 79,
+    "puntosS1": 48,
+    "puntosS2": 31,
     "revisados": ["mat3", "mat4", "mat6"]
   },
   {
     "alumnoId": "a9",
+    "nombre": "Samuel",
+    "puntosTotales": 43,
+    "puntosS1": 26,
+    "puntosS2": 17,
     "revisados": ["mat5"]
   },
   {
     "alumnoId": "a10",
+    "nombre": "Jazmín",
+    "puntosTotales": 95,
+    "puntosS1": 55,
+    "puntosS2": 40,
     "revisados": ["mat2", "mat3", "mat6"]
   },
   {
     "alumnoId": "a11",
+    "nombre": "Sofía",
+    "puntosTotales": 65,
+    "puntosS1": 39,
+    "puntosS2": 26,
     "revisados": ["mat1", "mat2"]
   }
-
 ]

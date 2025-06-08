@@ -1,0 +1,33 @@
+/* Quitamos el bloqueo al scroll */
+.ranking-overlay {
+  position: absolute; /* antes era fixed */
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+  z-index: 1000;
+}
+
+.ranking-modal {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 700px;
+  width: 100%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.cerrar-btn {
+  margin-top: 1rem;
+  background-color: #444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}

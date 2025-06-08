@@ -7,13 +7,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CheckCircle, ChevronDown, ChevronUp, Circle, AlertCircle } from "lucide-react";
-import PopUp from './components/popup/PopUp.jsx'
+import PopUp from './components/popup/PopUp.jsx';
+import DesempenoEstudianteCurso from "./components/DesempenoEstudianteCurso";
 
 interface Material {
   tipo: string;
   titulo: string;
   estado: "Revisado" | "Por entregar" | "No revisado";
   id: string;
+  puntos: number;
   desde?: string;
   hasta?: string;
 }
@@ -21,25 +23,27 @@ interface Material {
 interface SemanaData {
   semana: string;
   materiales: Material[];
+  maxPuntos: number | string;
 }
 
 interface AlumnoRevision {
   alumnoId: string;
-  revisados: string[]; // lista de ids de materiales revisados
+  revisados: string[];
 }
 
-export default function Semana11() {
+export default function SemanaApp() {
+  const [maxPuntosCurso, setMaxPuntosCurso] = useState<number>(0);
   const [classShow, setclassShow] = useState(" active");
+  const [mostrarDesempeno, setMostrarDesempeno] = useState(false);
+  const [openWeeks, setOpenWeeks] = useState<Record<number, boolean>>({});
+  const [weekData, setWeekData] = useState<SemanaData[]>([]);
+  const [porcentajes, setPorcentajes] = useState<Record<string, number>>({});
+  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+  const [puntos, setPuntos] = useState<number>(0);
+  const [estudianteActual] = useState("kaleb");
 
   const openPopUp = () => setclassShow(" active");
   const closePopUp = () => setclassShow("");
-
-  const [openWeeks, setOpenWeeks] = useState<Record<number, boolean>>({});
-  const [weekData, setWeekData] = useState<SemanaData[]>([]);
-  // const [alumnos, setAlumnos] = useState<AlumnoRevision[]>([]);
-  const [porcentajes, setPorcentajes] = useState<Record<string, number>>({});
-  const [puntos, setPuntos] = useState<number>(0);
-  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
   const toggleWeek = (weekIndex: number) => {
     setOpenWeeks((prev) => ({
@@ -48,29 +52,26 @@ export default function Semana11() {
     }));
   };
 
-  const handleCheckboxChange = (id: string) => {
-    setCheckedItems((prev) => {
-      if (prev[id]) return prev; // No permitir desmarcar
-      setPuntos((prevPuntos) => prevPuntos + 10);
-      return {
-        ...prev,
-        [id]: true,
-      };
-    });
+  const handleCheckboxChange = (material: Material) => {
+    const id = material.id;
+    if (checkedItems[id]) return;
+
+    setPuntos((prev) => prev + material.puntos);
+    setCheckedItems((prev) => ({ ...prev, [id]: true }));
+
+    // Actualizar el estado del material dentro de weekData
+    setWeekData((prevWeekData) =>
+      prevWeekData.map((semana) => ({
+        ...semana,
+        materiales: semana.materiales.map((mat) =>
+          mat.id === id && mat.estado === "No revisado"
+            ? { ...mat, estado: "Revisado" }
+            : mat
+        ),
+      }))
+    );
   };
 
-  const handleMaterialClick = (weekIndex: number, materialId: string) => {
-    setWeekData((prev) => {
-      const updated = [...prev];
-      const week = updated[weekIndex];
-      week.materiales = week.materiales.map((mat) =>
-        mat.id === materialId && mat.estado === "No revisado"
-          ? { ...mat, estado: "Revisado" }
-          : mat
-      );
-      return updated;
-    });
-  };
 
   useEffect(() => {
     Promise.all([fetch("/semana.json"), fetch("/alumnos.json")])
@@ -79,9 +80,12 @@ export default function Semana11() {
         const alumnoData: AlumnoRevision[] = await alumnosRes.json();
 
         setWeekData(semanaData);
-        // setAlumnos(alumnoData);
 
-        // Calcular porcentajes dinámicamente
+        const totalMaxPuntos = semanaData.reduce((acc, semana) => {
+          return acc + semana.materiales.reduce((sum, m) => sum + (m.puntos || 0), 0);
+        }, 0);
+        setMaxPuntosCurso(totalMaxPuntos);
+
         const totalAlumnos = alumnoData.length;
         const nuevosPorcentajes: Record<string, number> = {};
 
@@ -102,7 +106,12 @@ export default function Semana11() {
 
   return (
     <div className="p-6">
-      <button className="rounded-md bg-blue-300 py-2 px-4 cursor-pointer font-bold" onClick={openPopUp}>Mostrar resumen</button>
+      <button
+        className="rounded-md bg-blue-300 py-2 px-4 cursor-pointer font-bold"
+        onClick={openPopUp}
+      >
+        Mostrar resumen
+      </button>
 
       <PopUp
         closePopUp={closePopUp}
@@ -111,8 +120,26 @@ export default function Semana11() {
         porcentajes={porcentajes}
       />
 
+      <button
+        onClick={() => setMostrarDesempeno(true)}
+        className="mt-4 mb-2 rounded bg-indigo-600 text-white px-4 py-2 font-semibold"
+      >
+        Ver mi desempeño
+      </button>
+
+      {mostrarDesempeno && (
+        <DesempenoEstudianteCurso
+          estudiantes={[
+            { nombre: estudianteActual, puntosTotales: puntos }
+          ]}
+          estudianteActual={{ nombre: estudianteActual, puntosTotales: puntos }}
+          maxPuntos={maxPuntosCurso}
+          onClose={() => setMostrarDesempeno(false)}
+        />
+      )}
 
       <h1 className="text-lg font-bold mb-4">Puntos acumulados: {puntos}</h1>
+
       {weekData.map((semana, i) => (
         <Card key={i} className="mb-4 shadow-md">
           <CardContent>
@@ -121,11 +148,7 @@ export default function Semana11() {
               onClick={() => toggleWeek(i)}
             >
               <h2 className="text-xl font-semibold">{semana.semana}</h2>
-              {openWeeks[i] ? (
-                <ChevronUp className="w-5 h-5" />
-              ) : (
-                <ChevronDown className="w-5 h-5" />
-              )}
+              {openWeeks[i] ? <ChevronUp /> : <ChevronDown />}
             </div>
 
             {openWeeks[i] && (
@@ -133,7 +156,6 @@ export default function Semana11() {
                 <p className="font-medium mb-3">Material de estudio</p>
                 {semana.materiales.map((mat, j) => {
                   const porcentaje = porcentajes[mat.id] ?? 0;
-
                   const estadoClase =
                     mat.estado === "Revisado"
                       ? "bg-green-200 text-green-800"
@@ -141,13 +163,10 @@ export default function Semana11() {
                       ? "bg-yellow-300 text-yellow-900 animate-pulse"
                       : "bg-gray-200 text-gray-800 animate-pulse";
 
-                  const showCheckbox = mat.estado !== "Por entregar";
-
                   return (
                     <div
                       key={j}
-                      className="relative border p-4 rounded-lg mb-2 bg-white flex justify-between items-center cursor-pointer"
-                      onClick={() => handleMaterialClick(i, mat.id)}
+                      className="relative border p-4 rounded-lg mb-2 bg-white flex justify-between items-center"
                     >
                       <div>
                         <p className="text-sm text-gray-600">
@@ -160,18 +179,18 @@ export default function Semana11() {
                             <strong>Hasta:</strong> {mat.hasta}
                           </p>
                         )}
+                        <p className="text-xs mt-1 text-gray-500">
+                          <strong>Puntos:</strong> {mat.puntos}
+                        </p>
                       </div>
 
                       <div className="flex items-center gap-4">
-                        {showCheckbox && (
+                        {mat.estado !== "Por entregar" && (
                           <input
                             type="checkbox"
                             className="w-5 h-5"
                             checked={checkedItems[mat.id] || false}
-                            onChange={(e) => {
-                              e.stopPropagation();
-                              handleCheckboxChange(mat.id);
-                            }}
+                            onChange={() => handleCheckboxChange(mat)}
                           />
                         )}
 
