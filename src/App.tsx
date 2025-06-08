@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CheckCircle, ChevronDown, ChevronUp, Circle, AlertCircle } from "lucide-react";
+import PopUp from './components/popup/PopUp.jsx'
 
 interface Material {
   tipo: string;
@@ -28,16 +29,47 @@ interface AlumnoRevision {
 }
 
 export default function Semana11() {
+  const [classShow, setclassShow] = useState(" active");
+
+  const openPopUp = () => setclassShow(" active");
+  const closePopUp = () => setclassShow("");
+
   const [openWeeks, setOpenWeeks] = useState<Record<number, boolean>>({});
   const [weekData, setWeekData] = useState<SemanaData[]>([]);
   // const [alumnos, setAlumnos] = useState<AlumnoRevision[]>([]);
   const [porcentajes, setPorcentajes] = useState<Record<string, number>>({});
+  const [puntos, setPuntos] = useState<number>(0);
+  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
   const toggleWeek = (weekIndex: number) => {
     setOpenWeeks((prev) => ({
       ...prev,
       [weekIndex]: !prev[weekIndex],
     }));
+  };
+
+  const handleCheckboxChange = (id: string) => {
+    setCheckedItems((prev) => {
+      if (prev[id]) return prev; // No permitir desmarcar
+      setPuntos((prevPuntos) => prevPuntos + 10);
+      return {
+        ...prev,
+        [id]: true,
+      };
+    });
+  };
+
+  const handleMaterialClick = (weekIndex: number, materialId: string) => {
+    setWeekData((prev) => {
+      const updated = [...prev];
+      const week = updated[weekIndex];
+      week.materiales = week.materiales.map((mat) =>
+        mat.id === materialId && mat.estado === "No revisado"
+          ? { ...mat, estado: "Revisado" }
+          : mat
+      );
+      return updated;
+    });
   };
 
   useEffect(() => {
@@ -70,6 +102,17 @@ export default function Semana11() {
 
   return (
     <div className="p-6">
+      <button className="rounded-md bg-blue-300 py-2 px-4 cursor-pointer font-bold" onClick={openPopUp}>Mostrar resumen</button>
+
+      <PopUp
+        closePopUp={closePopUp}
+        classShow={classShow}
+        semanaData={weekData}
+        porcentajes={porcentajes}
+      />
+
+
+      <h1 className="text-lg font-bold mb-4">Puntos acumulados: {puntos}</h1>
       {weekData.map((semana, i) => (
         <Card key={i} className="mb-4 shadow-md">
           <CardContent>
@@ -89,6 +132,7 @@ export default function Semana11() {
               <div className="mt-4">
                 <p className="font-medium mb-3">Material de estudio</p>
                 {semana.materiales.map((mat, j) => {
+                  const porcentaje = porcentajes[mat.id] ?? 0;
 
                   const estadoClase =
                     mat.estado === "Revisado"
@@ -97,17 +141,13 @@ export default function Semana11() {
                       ? "bg-yellow-300 text-yellow-900 animate-pulse"
                       : "bg-gray-200 text-gray-800 animate-pulse";
 
-                  // const tooltipColor =
-                  //   mat.estado === "Revisado"
-                  //     ? "bg-blue-200 text-blue-700"
-                  //     : "bg-red-500 text-white animate-pulse";
-
-                  const porcentaje = porcentajes[mat.id] ?? 0;
+                  const showCheckbox = mat.estado !== "Por entregar";
 
                   return (
                     <div
                       key={j}
-                      className="relative border p-4 rounded-lg mb-2 bg-white flex justify-between items-center"
+                      className="relative border p-4 rounded-lg mb-2 bg-white flex justify-between items-center cursor-pointer"
+                      onClick={() => handleMaterialClick(i, mat.id)}
                     >
                       <div>
                         <p className="text-sm text-gray-600">
@@ -122,29 +162,43 @@ export default function Semana11() {
                         )}
                       </div>
 
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <span
-                              className={`flex items-center px-3 py-1 rounded-full text-sm shadow-md cursor-default font-bold ${estadoClase}`}
-                            >
-                              {mat.estado === "Revisado" ? (
-                                <CheckCircle className="size-4 mr-1 text-green-600" />
-                              ) : mat.estado === "Por entregar" ? (
-                                <AlertCircle className="size-4 mr-1 text-yellow-600" />
-                              ) : (
-                                <Circle className="size-4 mr-1 text-gray-600" />
-                              )}
-                              {mat.estado}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="text-sm">
-                              {porcentaje}% de alumnos ya revisó este material
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <div className="flex items-center gap-4">
+                        {showCheckbox && (
+                          <input
+                            type="checkbox"
+                            className="w-5 h-5"
+                            checked={checkedItems[mat.id] || false}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              handleCheckboxChange(mat.id);
+                            }}
+                          />
+                        )}
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <span
+                                className={`flex items-center px-3 py-1 rounded-full text-sm shadow-md cursor-default font-bold ${estadoClase}`}
+                              >
+                                {mat.estado === "Revisado" ? (
+                                  <CheckCircle className="size-4 mr-1 text-green-600" />
+                                ) : mat.estado === "Por entregar" ? (
+                                  <AlertCircle className="size-4 mr-1 text-yellow-600" />
+                                ) : (
+                                  <Circle className="size-4 mr-1 text-gray-600" />
+                                )}
+                                {mat.estado}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-sm">
+                                {porcentaje}% de alumnos ya revisó este material
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </div>
                   );
                 })}

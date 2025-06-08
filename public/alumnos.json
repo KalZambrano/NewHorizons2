@@ -5,7 +5,7 @@
   },
   {
     "alumnoId": "a2",
-    "revisados": ["mat1"]
+    "revisados": []
   },
   {
     "alumnoId": "a3",
@@ -13,7 +13,7 @@
   },
   {
     "alumnoId": "a4",
-    "revisados": ["mat5", "mat2", "mat3"]
+    "revisados": ["mat5"]
   },
   {
     "alumnoId": "a5",
