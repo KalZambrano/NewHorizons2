@@ -1,6 +1,7 @@
 [
   {
     "semana": "Semana 01",
+    "maxPuntos": 60,
     "materiales": [
       {
         "id": "mat1",
@@ -33,6 +34,7 @@
   },
   {
     "semana": "Semana 02",
+    "maxPuntos": 40,
     "materiales": [
       {
         "id": "mat4",

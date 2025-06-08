@@ -1,3 +1,4 @@
+import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -9,12 +10,25 @@ import {
   Legend,
 } from 'chart.js';
 
+import type { ChartOptions } from 'chart.js';
 import './Ranking.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const getColor = (rango, actualRango) => {
-  const colores = {
+interface Estudiante {
+  nombre: string;
+  puntosTotales: number;
+}
+
+interface DesempenoEstudianteCursoProps {
+  estudiantes: Estudiante[];
+  estudianteActual: Estudiante;
+  maxPuntos: number;
+  onClose: () => void;
+}
+
+const getColor = (rango: string, actualRango: string): string => {
+  const colores: Record<string, string> = {
     'Excelente (90–100)': 'rgba(54, 162, 235, 0.6)',   // azul
     'Bueno (80–89)': 'rgba(75, 192, 75, 0.6)',         // verde
     'Intermedio (70–79)': 'rgba(255, 205, 86, 0.6)',   // amarillo
@@ -22,7 +36,7 @@ const getColor = (rango, actualRango) => {
     'Deficiente (<60)': 'rgba(255, 99, 132, 0.6)',     // rojo
   };
 
-  const resaltado = {
+  const resaltado: Record<string, string> = {
     'Excelente (90–100)': 'rgba(54, 162, 235, 1)',
     'Bueno (80–89)': 'rgba(75, 192, 75, 1)',
     'Intermedio (70–79)': 'rgba(255, 205, 86, 1)',
@@ -33,12 +47,15 @@ const getColor = (rango, actualRango) => {
   return rango === actualRango ? resaltado[rango] : colores[rango];
 };
 
-const DesempenoEstudianteCurso = ({ estudiantes, estudianteActual, onClose, maxPuntos }) => {
-  const getPuntos = (e) => {
-    return e.puntosTotales;
-  };  
+const DesempenoEstudianteCurso: React.FC<DesempenoEstudianteCursoProps> = ({
+  estudiantes,
+  estudianteActual,
+  onClose,
+  maxPuntos,
+}) => {
+  const getPuntos = (e: Estudiante): number => e.puntosTotales;
 
-  const getRango = (porcentaje) => {
+  const getRango = (porcentaje: number): string => {
     if (porcentaje >= 90) return 'Excelente (90–100)';
     if (porcentaje >= 80) return 'Bueno (80–89)';
     if (porcentaje >= 70) return 'Intermedio (70–79)';
@@ -53,8 +70,10 @@ const DesempenoEstudianteCurso = ({ estudiantes, estudianteActual, onClose, maxP
     'Bajo (60–69)',
     'Deficiente (<60)',
   ];
-  const conteoPorRango = {};
+
+  const conteoPorRango: Record<string, number> = {};
   rangos.forEach(r => (conteoPorRango[r] = 0));
+
   estudiantes.forEach(e => {
     const puntos = e.puntosTotales;
     const porcentaje = (puntos / maxPuntos) * 100;
@@ -81,7 +100,7 @@ const DesempenoEstudianteCurso = ({ estudiantes, estudianteActual, onClose, maxP
     ],
   };
 
-  const options = {
+  const options: ChartOptions<'bar'> = {
     indexAxis: 'y',
     responsive: true,
     scales: {
@@ -101,9 +120,9 @@ const DesempenoEstudianteCurso = ({ estudiantes, estudianteActual, onClose, maxP
       },
       tooltip: {
         callbacks: {
-          label: (context) => {
-            const rango = context.label;
-            const cantidad = context.raw;
+          label: context => {
+            const rango = context.label as string;
+            const cantidad = context.raw as number;
             const esTuRango = rango === rangoEstudiante;
             return `${cantidad} estudiante(s)${esTuRango ? ' — Tú estás aquí' : ''}`;
           },

@@ -42,10 +42,10 @@
   {
     "alumnoId": "a6",
     "nombre": "Kaleb",
-    "puntosTotales": 10,
-    "puntosS1": 6,
-    "puntosS2": 4,
-    "revisados": ["mat1", "mat3"]
+    "puntosTotales": 0,
+    "puntosS1": 0,
+    "puntosS2": 0,
+    "revisados": []
   },
   {
     "alumnoId": "a7",
