@@ -32,6 +32,8 @@ interface AlumnoRevision {
 }
 
 export default function SemanaApp() {
+  const [totalAlumnos, setTotalAlumnos] = useState<number>(0);
+
   const [maxPuntosCurso, setMaxPuntosCurso] = useState<number>(0);
   const [classShow, setclassShow] = useState(" active");
   const [mostrarDesempeno, setMostrarDesempeno] = useState(false);
@@ -53,56 +55,73 @@ export default function SemanaApp() {
   };
 
   const handleCheckboxChange = (material: Material) => {
-    const id = material.id;
-    if (checkedItems[id]) return;
+  const id = material.id;
 
-    setPuntos((prev) => prev + material.puntos);
-    setCheckedItems((prev) => ({ ...prev, [id]: true }));
+  // Si ya está marcado, no hacer nada
+  if (checkedItems[id]) return;
 
-    // Actualizar el estado del material dentro de weekData
+  // Marcar checkbox visualmente
+  setCheckedItems((prev) => ({ ...prev, [id]: true }));
+
+  // Sumar puntos siempre (si no estaba marcado antes)
+  setPuntos((prev) => prev + material.puntos);
+
+  // Si el material estaba "No revisado", cambiar a "Revisado" y actualizar porcentaje
+  if (material.estado === "No revisado") {
+    // Cambiar estado a "Revisado"
     setWeekData((prevWeekData) =>
       prevWeekData.map((semana) => ({
         ...semana,
         materiales: semana.materiales.map((mat) =>
-          mat.id === id && mat.estado === "No revisado"
-            ? { ...mat, estado: "Revisado" }
-            : mat
+          mat.id === id ? { ...mat, estado: "Revisado" } : mat
         ),
       }))
     );
-  };
+
+    // Actualizar porcentaje simulando revisión por el estudiante actual
+    setPorcentajes((prevPorcentajes) => {
+      const prev = prevPorcentajes[id] || 0;
+      const yaRevisados = Math.round((prev / 100) * totalAlumnos);
+      const nuevoRevisados = Math.min(yaRevisados + 1, totalAlumnos);
+      const nuevoPorcentaje = Math.round((nuevoRevisados / totalAlumnos) * 100);
+      return { ...prevPorcentajes, [id]: nuevoPorcentaje };
+    });
+  }
+};
+
 
 
   useEffect(() => {
-    Promise.all([fetch("/semana.json"), fetch("/alumnos.json")])
-      .then(async ([semanaRes, alumnosRes]) => {
-        const semanaData: SemanaData[] = await semanaRes.json();
-        const alumnoData: AlumnoRevision[] = await alumnosRes.json();
+  Promise.all([fetch("/semana.json"), fetch("/alumnos.json")])
+    .then(async ([semanaRes, alumnosRes]) => {
+      const semanaData: SemanaData[] = await semanaRes.json();
+      const alumnoData: AlumnoRevision[] = await alumnosRes.json();
 
-        setWeekData(semanaData);
+      setWeekData(semanaData);
+      setTotalAlumnos(alumnoData.length); // 👈 Guarda el total de alumnos
 
-        const totalMaxPuntos = semanaData.reduce((acc, semana) => {
-          return acc + semana.materiales.reduce((sum, m) => sum + (m.puntos || 0), 0);
-        }, 0);
-        setMaxPuntosCurso(totalMaxPuntos);
+      const totalMaxPuntos = semanaData.reduce((acc, semana) => {
+        return acc + semana.materiales.reduce((sum, m) => sum + (m.puntos || 0), 0);
+      }, 0);
+      setMaxPuntosCurso(totalMaxPuntos);
 
-        const totalAlumnos = alumnoData.length;
-        const nuevosPorcentajes: Record<string, number> = {};
+      const nuevosPorcentajes: Record<string, number> = {};
 
-        semanaData.forEach((semana) => {
-          semana.materiales.forEach((mat) => {
-            const revisados = alumnoData.filter((alumno) =>
-              alumno.revisados.includes(mat.id)
-            ).length;
-            const porcentaje = Math.round((revisados / totalAlumnos) * 100);
-            nuevosPorcentajes[mat.id] = porcentaje;
-          });
+      semanaData.forEach((semana) => {
+        semana.materiales.forEach((mat) => {
+          const revisados = alumnoData.filter((alumno) =>
+            alumno.revisados.includes(mat.id)
+          ).length;
+          const porcentaje = Math.round((revisados / alumnoData.length) * 100);
+          nuevosPorcentajes[mat.id] = porcentaje;
         });
+      });
 
-        setPorcentajes(nuevosPorcentajes);
-      })
-      .catch((err) => console.error("Error loading JSON:", err));
-  }, []);
+      setPorcentajes(nuevosPorcentajes);
+    })
+    .catch((err) => console.error("Error loading JSON:", err));
+}, []);
+
 
   return (
     <div className="p-6">
